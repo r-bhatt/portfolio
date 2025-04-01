@@ -2,40 +2,38 @@ import { useRef, useState } from "react";
 import Ticks from "../ticks";
 import styles from "./knob.module.css";
 import clsx from "clsx";
+import throttle from "~/utils/throttle";
+import { getClosestValidAngle, getCurrentAngle, TICK_ANGLES } from "./util";
 
 const Knob = () => {
-  const [grabbed, setGrabbed] = useState(true);
-  const [knobAngle, setKnobAngle] = useState(0);
+  const [grabbed, setGrabbed] = useState(false);
+  const [knobAngle, setKnobAngle] = useState(TICK_ANGLES[0]);
+  const [activeTick, setActiveTick] = useState(0);
 
   const knobRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = () => {
-    console.log("down");
+    setGrabbed(true);
   };
 
   const handleMouseUp = () => {
-    console.log("up");
+    setGrabbed(false);
+    setKnobAngle(() => TICK_ANGLES[activeTick]);
   };
 
-  const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    if (!knobRef.current) return;
-    if (!grabbed) return;
+  const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = throttle(
+    (e) => {
+      if (!knobRef.current) return;
+      if (!grabbed) return;
 
-    const { x, y, width, height } = knobRef.current.getBoundingClientRect();
-    const { clientX, clientY } = e;
+      const currentAngle = getCurrentAngle(knobRef.current, e);
+      if (Math.abs(currentAngle) > 45) return;
 
-    const centerX = x + width / 2;
-    const centerY = y + height / 2;
-
-    const oppositeSide = centerY - clientY;
-    const adjacentSide = centerX - clientX;
-
-    const currentRadianAngle = Math.atan2(oppositeSide, adjacentSide);
-
-    const currentDegreeAngle = (currentRadianAngle * 180) / Math.PI;
-
-    if (Math.abs(currentDegreeAngle) <= 45) setKnobAngle(currentDegreeAngle);
-  };
+      setKnobAngle(currentAngle);
+      setActiveTick(getClosestValidAngle(currentAngle));
+    },
+    250
+  );
 
   return (
     <div
@@ -55,14 +53,14 @@ const Knob = () => {
       ></div>
 
       <span className="absolute uppercase text-gray-text text-[80%] opacity-50 bottom-[1em] -left-[2.5em]">
-        Min
+        About
       </span>
       <span className="absolute uppercase text-gray-text text-[80%] opacity-50 -left-[2.5em]">
-        Max
+        Experience
       </span>
 
       <div className="grid gap-1.5">
-        <Ticks activeTick={2} />
+        <Ticks activeTick={activeTick} />
       </div>
     </div>
   );
