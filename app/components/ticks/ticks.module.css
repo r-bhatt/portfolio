@@ -1,0 +1,16 @@
+.tick::after {
+  content: "";
+  height: 0.08em;
+  width: 0.6em;
+  background-color: rgba(255, 255, 255, 0.2);
+  position: absolute;
+  left: -1.5em;
+  top: 50%;
+  transition: all 180ms ease-out;
+}
+
+.activetick::after {
+  background-color: #a8d8f8;
+  box-shadow: 0 0 0.3em 0.08em var(--color-shining-blue);
+  transition: all 50ms ease-in;
+}

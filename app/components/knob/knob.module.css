@@ -1,0 +1,17 @@
+.knob_surround {
+  box-shadow: 0 0.2em 0.1em 0.05em rgba(255, 255, 255, 0.1) inset,
+    0 -0.2em 0.1em 0.05em rgba(0, 0, 0, 0.5) inset,
+    0 0.5em 0.65em 0 rgba(0, 0, 0, 0.3);
+}
+
+.knob::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 1.5em;
+  width: 3%;
+  aspect-ratio: 1;
+  background-color: var(--color-shining-blue);
+  border-radius: 50%;
+  box-shadow: 0 0 0.4em 0 var(--color-shining-blue);
+}
